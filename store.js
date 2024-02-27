@@ -65,14 +65,24 @@ const recipesReducer = (state = initialState, action) => {
                 searchTerm: ''
             };
         case 'searchTerm/setSearchTerm':
-            return state; // fix me!
+            return {
+                ...state,
+                searchTerm: action.payload
+            };
 
         case 'favoriteRecipes/addRecipe':
-            return state; // fix me!
+            return {
+                ...state,
+                favoriteRecipes: [...state.favoriteRecipes, action.payload]
+            };
 
         case 'favoriteRecipes/removeRecipe':
-            return state; // fix me!
-
+            return {
+                ...state,
+                favoriteRecipes: state.favoriteRecipes.filter((recipe) => {
+                    recipe.id !== action.payload.id
+                })
+            };
         default:
             return state;
     };

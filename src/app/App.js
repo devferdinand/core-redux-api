@@ -1,37 +1,48 @@
-import { addRecipe } from '../favoriteRecipes/favoriteRecipesSlice.js';
-import { loadData } from './allRecipesSlice'
+import React from 'react';
 
-import React, { useEffect } from 'react';
-import FavoriteButton from "../../components/FavoriteButton";
-import Recipe from "../../components/Recipe";
+import { AllRecipes } from '../features/allRecipes/AllRecipes.js';
+import { SearchTerm } from '../features/searchTerm/SearchTerm.js';
 
-const favoriteIconURL = 'https://static-assets.codecademy.com/Courses/Learn-Redux/Recipes-App/icons/favorite.svg'
+// Import the FavoriteRecipes component here.
+import { FavoriteRecipes } from "../features/favoriteRecipes/FavoriteRecipes.js";
 
-export const AllRecipes = (props) => {
-  
-  const { allRecipes, dispatch } = props;
+export function App(props) {
+  const {state, dispatch} = props;
 
-  const onFirstRender = () => {
-    dispatch(loadData());
-  }
-  useEffect(onFirstRender, [])
-  
-  const onAddRecipeHandler = (recipe) => {
-    dispatch(addRecipe(recipe));
-  };
+  const visibleAllRecipes = getFilteredRecipes(state.allRecipes, state.searchTerm);
+  const visibleFavoriteRecipes = getFilteredRecipes(state.favoriteRecipes, state.searchTerm);
 
+  // Render the <FavoriteRecipes /> component.
+  // Pass `dispatch` and `favoriteRecipes` props.
   return (
-    <div className="recipes-container">
-      {allRecipes.map((recipe) => (
-        <Recipe recipe={recipe} key={recipe.id}>
-          <FavoriteButton
-            onClickHandler={() => onAddRecipeHandler(recipe)}
-            icon={favoriteIconURL}
-          >
-            Add to Favorites
-          </FavoriteButton>
-        </Recipe>
-      ))}
-    </div>
-  );
-};
+    <main>
+      <section>
+        <SearchTerm
+          searchTerm={state.searchTerm}
+          dispatch={dispatch}
+        />
+      </section>
+      <section>
+        <h2>Favorite Recipes</h2>
+        <FavoriteRecipes
+          favoriteRecipes={visibleFavoriteRecipes}
+          dispatch={dispatch}
+        />
+      </section>
+      <hr />
+      <section>
+        <h2>All Recipes</h2>
+        <AllRecipes
+          allRecipes={visibleAllRecipes} 
+          dispatch={dispatch}
+        />
+      </section>
+    </main>
+  )
+}
+
+/* Utility Helpers */
+
+function getFilteredRecipes(recipes, searchTerm) {
+  return recipes.filter(recipe => recipe.name.toLowerCase().includes(searchTerm.toLowerCase()));
+}

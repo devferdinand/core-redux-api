@@ -1,4 +1,4 @@
-import { createStore } from 'redux';
+import { createStore, combineReducers } from 'redux';
 import allRecipesData from './data.js';
 
 // Action Creators
@@ -82,15 +82,11 @@ const favoriteRecipesReducer = (favoriteRecipes = initialFavoriteRecipes, action
 }
 
 
-const rootReducer = (state = {}, action) => {
-    const nextState = {
-        allRecipes: allRecipesReducer(state.allRecipes, action),
-        searchTerm: searchTermReducer(state.searchTerm, action),
-        // Add in the favoriteRecipes slice using the 
-        // favoriteRecipesReducer function. 
-        favoriteRecipes: favoriteRecipesReducer(state.favoriteRecipes, action)
-    }
-    return nextState;
+const reducers = {
+    allRecipes: allRecipesReducer,
+    favoriteRecipes: favoriteRecipesReducer,
+    searchTerm: searchTermReducer
 }
 
+const rootReducer = combineReducers(reducers);
 export const store = createStore(rootReducer);
